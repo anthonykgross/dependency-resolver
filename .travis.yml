@@ -1,0 +1,18 @@
+language: php
+
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - hhvm
+
+before_script:
+  - composer install --no-interaction --prefer-source --dev
+
+script:
+  - php vendor/bin/phpunit -c phpunit.xml.dist
+
+notifications:
+  email:
+    - anthony.k.gross@gmail.com

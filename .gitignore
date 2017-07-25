@@ -1,0 +1,5 @@
+/.idea/
+/vendor/
+/composer.lock
+/fixtures/*/vendor
+/fixtures/whois/composer.lock
