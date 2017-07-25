@@ -62,3 +62,4 @@ $resolution = \Algorithm\DependencyResolver::resolve($tree);
 
 ## Copyright and license
 Code and documentation copyright 2017. Code released under [the MIT license](https://github.com/anthonykgross/dependency-resolver/blob/master/LICENSE).
+
