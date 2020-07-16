@@ -12,7 +12,7 @@ class DependencyResolver
     /**
      * @param array $tree
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception\CircularReferenceException
      */
     public static function resolve(array $tree)
     {
@@ -30,6 +30,7 @@ class DependencyResolver
      * @param array $items
      * @param array $resolved
      * @param array $unresolved
+     * @throws Exception\CircularReferenceException
      * @return array
      */
     private static function resolver($item, array $items, array $resolved, array $unresolved)
@@ -41,7 +42,7 @@ class DependencyResolver
                     array_push($unresolved, $dep);
                     list($resolved, $unresolved) = self::resolver($dep, $items, $resolved, $unresolved);
                 } else {
-                    throw new \RuntimeException("Circular dependency: $item -> $dep");
+                    throw new Exception\CircularReferenceException($item, $dep);
                 }
             }
         }

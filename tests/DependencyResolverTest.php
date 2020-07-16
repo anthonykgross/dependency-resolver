@@ -8,7 +8,7 @@ class DependencyResolverTest extends \PHPUnit_Framework_TestCase
 
     /**
      *
-     * @expectedException \RuntimeException
+     * @expectedException \Algorithm\CircularReferenceException
      * @expectedExceptionMessage Circular dependency: C -> A
      */
     public function testCircleDependenciesCase1()
@@ -22,7 +22,7 @@ class DependencyResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Algorithm\CircularReferenceException
      * @expectedExceptionMessage Circular dependency: B -> A
      */
     public function testCircleDependenciesCase2()
