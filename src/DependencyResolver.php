@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Algorithm;
 
 /**
@@ -10,37 +11,33 @@ namespace Algorithm;
 class DependencyResolver
 {
     /**
-     * @param array $tree
-     * @return array|mixed
      * @throws Exception\CircularReferenceException
      */
-    public static function resolve(array $tree)
+    public static function resolve(array $tree): array
     {
-        $resolved = array();
-        $unresolved = array();
+        $resolved = [];
+        $unresolved = [];
         // Resolve dependencies for each table
         foreach (array_keys($tree) as $table) {
-            list ($resolved, $unresolved) = self::resolver($table, $tree, $resolved, $unresolved);
+            [$resolved, $unresolved] = self::resolver($table, $tree, $resolved, $unresolved);
         }
         return $resolved;
     }
 
     /**
-     * @param $item
-     * @param array $items
-     * @param array $resolved
-     * @param array $unresolved
+     * @param int|string $item
+     *
      * @throws Exception\CircularReferenceException
-     * @return array
      */
-    private static function resolver($item, array $items, array $resolved, array $unresolved)
+    private static function resolver($item, array $items, array $resolved, array $unresolved): array
     {
-        array_push($unresolved, $item);
+        $unresolved[] = $item;
+
         foreach ($items[$item] as $dep) {
             if (!in_array($dep, $resolved)) {
                 if (!in_array($dep, $unresolved)) {
-                    array_push($unresolved, $dep);
-                    list($resolved, $unresolved) = self::resolver($dep, $items, $resolved, $unresolved);
+                    $unresolved[] = $dep;
+                    [$resolved, $unresolved] = self::resolver($dep, $items, $resolved, $unresolved);
                 } else {
                     throw new Exception\CircularReferenceException($item, $dep);
                 }
@@ -48,13 +45,13 @@ class DependencyResolver
         }
         // Add $item to $resolved if it's not already there
         if (!in_array($item, $resolved)) {
-            array_push($resolved, $item);
+            $resolved[] = $item;
         }
         // Remove all occurrences of $item in $unresolved
         while (($index = array_search($item, $unresolved)) !== false) {
             unset($unresolved[$index]);
         }
 
-        return array($resolved, $unresolved);
+        return [$resolved, $unresolved];
     }
 }

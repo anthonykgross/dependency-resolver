@@ -1,88 +1,87 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Algorithm\Tests;
 
 use Algorithm\DependencyResolver;
+use Algorithm\Exception\CircularReferenceException;
+use PHPUnit\Framework\TestCase;
 
-class DependencyResolverTest extends \PHPUnit_Framework_TestCase
+class DependencyResolverTest extends TestCase
 {
-
-    /**
-     *
-     * @expectedException \Algorithm\CircularReferenceException
-     * @expectedExceptionMessage Circular dependency: C -> A
-     */
-    public function testCircleDependenciesCase1()
+    public function testCircleDependenciesCase1(): void
     {
-        $tree  = array(
-            'A' => array('B'),
-            'B' => array('C'),
-            'C' => array('A'),
-        );
+        $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage('Circular dependency: C -> A');
+
+        $tree = [
+            'A' => ['B'],
+            'B' => ['C'],
+            'C' => ['A'],
+        ];
         DependencyResolver::resolve($tree);
     }
 
-    /**
-     * @expectedException \Algorithm\CircularReferenceException
-     * @expectedExceptionMessage Circular dependency: B -> A
-     */
-    public function testCircleDependenciesCase2()
+    public function testCircleDependenciesCase2(): void
     {
-        $tree  = array(
-            'A' => array('E'),
-            'B' => array('A'),
-            'C' => array('B'),
-            'D' => array('C', 'A'),
-            'E' => array('C', 'B'),
-        );
+        $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage('Circular dependency: B -> A');
+
+        $tree = [
+            'A' => ['E'],
+            'B' => ['A'],
+            'C' => ['B'],
+            'D' => ['C', 'A'],
+            'E' => ['C', 'B'],
+        ];
         DependencyResolver::resolve($tree);
     }
 
-    public function testResolverCase1()
+    public function testResolverCase1(): void
     {
-        $tree  = array(
-            'A' => array('B'),
-            'B' => array('C'),
-            'C' => array(),
-        );
+        $tree = [
+            'A' => ['B'],
+            'B' => ['C'],
+            'C' => [],
+        ];
         $resolution = DependencyResolver::resolve($tree);
-        $this->assertEquals($resolution, array('C','B','A'));
+        static::assertEquals($resolution, ['C','B','A']);
     }
 
-    public function testResolverCase2()
+    public function testResolverCase2(): void
     {
-        $tree  = array(
+        $tree = array(
             'A' => array('C'),
             'B' => array('C'),
             'C' => array(),
             'D' => array('B'),
         );
         $resolution = DependencyResolver::resolve($tree);
-        $this->assertEquals($resolution, array('C','A','B','D'));
+        static::assertEquals($resolution, ['C','A','B','D']);
     }
 
-    public function testResolverCase3()
+    public function testResolverCase3(): void
     {
-        $tree  = array(
-            'A' => array(),
-            'B' => array('A'),
-            'C' => array('B'),
-            'D' => array('C', 'A'),
-            'E' => array('C', 'B'),
-        );
+        $tree = [
+            'A' => [],
+            'B' => ['A'],
+            'C' => ['B'],
+            'D' => ['C', 'A'],
+            'E' => ['C', 'B'],
+        ];
         $resolution = DependencyResolver::resolve($tree);
-        $this->assertEquals($resolution, array('A','B','C','D','E'));
+        static::assertEquals($resolution, ['A','B','C','D','E']);
     }
 
-    public function testResolverCase4()
+    public function testResolverCase4(): void
     {
-        $tree  = array(
-            'A' => array(),
-            'B' => array('A'),
-            'D' => array('C', 'A'),
-            'C' => array('B'),
-            'E' => array('C', 'B'),
-        );
+        $tree = [
+            'A' => [],
+            'B' => ['A'],
+            'D' => ['C', 'A'],
+            'C' => ['B'],
+            'E' => ['C', 'B'],
+        ];
         $resolution = DependencyResolver::resolve($tree);
-        $this->assertEquals($resolution, array('A','B','C','D','E'));
+        static::assertEquals($resolution, ['A','B','C','D','E']);
     }
 }

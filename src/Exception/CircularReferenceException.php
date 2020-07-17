@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Algorithm\Exception;
 
@@ -18,7 +18,7 @@ class CircularReferenceException extends \RuntimeException
      * @param int|string $item
      * @param int|string $dependency
      */
-    public function __construct($item, $dependency, int $code = 0, \Exception $previous = null)
+    public function __construct($item, $dependency, int $code = 0, \Throwable $previous = null)
     {
         parent::__construct(sprintf("Circular dependency: %s -> %s", $item, $dependency), $code, $previous);
         $this->item = $item;
