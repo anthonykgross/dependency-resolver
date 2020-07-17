@@ -13,14 +13,19 @@ class DependencyResolver
     /**
      * @throws Exception\CircularReferenceException
      */
-    public static function resolve(array $tree): array
+    public static function resolve(array $tree, ?ResolveBehaviour $resolveBehaviour = null): array
     {
+        $resolveBehaviour = $resolveBehaviour ?? ResolveBehaviour::create()->setThrowOnCircularReference(true);
         $resolved = [];
         $unresolved = [];
 
         // Resolve dependencies for each table
         foreach (array_keys($tree) as $table) {
-            [$resolved, $unresolved] = self::resolver($table, $tree, $resolved, $unresolved);
+            [$resolved, $unresolved, $returnImmediately] = self::resolver($table, $tree, $resolved, $unresolved, $resolveBehaviour);
+
+            if ($returnImmediately) {
+                return $resolved;
+            }
         }
 
         return $resolved;
@@ -31,7 +36,7 @@ class DependencyResolver
      *
      * @throws Exception\CircularReferenceException
      */
-    private static function resolver($item, array $items, array $resolved, array $unresolved): array
+    private static function resolver($item, array $items, array $resolved, array $unresolved, ResolveBehaviour $resolveBehaviour): array
     {
         $unresolved[] = $item;
 
@@ -41,11 +46,19 @@ class DependencyResolver
             }
 
             if (in_array($dep, $unresolved, true)) {
-                throw new Exception\CircularReferenceException($item, $dep);
+                if ($resolveBehaviour->isThrowOnCircularReference()) {
+                    throw new Exception\CircularReferenceException($item, $dep);
+                }
+
+                return [$resolved, $unresolved, true];
             }
 
             $unresolved[] = $dep;
-            [$resolved, $unresolved] = self::resolver($dep, $items, $resolved, $unresolved);
+            [$resolved, $unresolved, $returnImmediately] = self::resolver($dep, $items, $resolved, $unresolved, $resolveBehaviour);
+
+            if ($returnImmediately) {
+                return [$resolved, $unresolved, $returnImmediately];
+            }
         }
 
         // Add $item to $resolved if it's not already there
@@ -58,6 +71,6 @@ class DependencyResolver
             unset($unresolved[$index]);
         }
 
-        return [$resolved, $unresolved];
+        return [$resolved, $unresolved, false];
     }
 }

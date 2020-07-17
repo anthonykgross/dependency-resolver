@@ -4,6 +4,7 @@ namespace Algorithm\Tests;
 
 use Algorithm\DependencyResolver;
 use Algorithm\Exception\CircularReferenceException;
+use Algorithm\ResolveBehaviour;
 use PHPUnit\Framework\TestCase;
 
 class DependencyResolverTest extends TestCase
@@ -19,6 +20,34 @@ class DependencyResolverTest extends TestCase
             'C' => ['A'],
         ];
         DependencyResolver::resolve($tree);
+    }
+
+    public function testCircleDependenciesCaseThrowBehaviour(): void
+    {
+        $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage('Circular dependency: B -> A');
+
+        $tree = [
+            'A' => ['B'],
+            'B' => ['A'],
+        ];
+        DependencyResolver::resolve(
+            $tree,
+            ResolveBehaviour::create()->setThrowOnCircularReference(true)
+        );
+    }
+
+    public function testCircleDependenciesCaseNotThrowBehaviour(): void
+    {
+        $tree = [
+            'A' => ['B'],
+            'B' => ['A'],
+        ];
+        $resolution = DependencyResolver::resolve(
+            $tree,
+            ResolveBehaviour::create()->setThrowOnCircularReference(false)
+        );
+        static::assertEquals($resolution, []);
     }
 
     public function testCircleDependenciesCase2(): void
