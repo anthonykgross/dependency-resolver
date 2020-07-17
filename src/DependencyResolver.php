@@ -11,7 +11,7 @@ namespace Algorithm;
 class DependencyResolver
 {
     /**
-     * @throws Exception\CircularReferenceException
+     * @throws Exception\ResolveException
      */
     public static function resolve(array $tree, ?ResolveBehaviour $resolveBehaviour = null): array
     {
@@ -34,7 +34,7 @@ class DependencyResolver
     /**
      * @param int|string $item
      *
-     * @throws Exception\CircularReferenceException
+     * @throws Exception\ResolveException
      */
     private static function resolver($item, array $items, array $resolved, array $unresolved, ResolveBehaviour $resolveBehaviour): array
     {
