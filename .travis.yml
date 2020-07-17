@@ -1,11 +1,12 @@
 language: php
 
-php:
-  - 7.2
-  - 7.3
-  - 7.4
-  - 8.0
-  - hhvm
+matrix:
+  include:
+    - php: 7.2
+    - php: 7.3
+    - php: 7.4
+#    - php: 8.0
+#    - php: hhvm
 
 before_script:
   - composer install --no-interaction --prefer-source --dev

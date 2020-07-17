@@ -54,12 +54,15 @@ $resolution = \Algorithm\DependencyResolver::resolve($tree);
 - <https://www.electricmonk.nl/log/2008/08/07/dependency-resolving-algorithm/>
 - <http://mamchenkov.net/wordpress/2016/11/22/dependency-resolution-with-graphs-in-php/>
 
-## Creator
+## Contributors
 **Anthony K GROSS**
 - <http://anthonykgross.fr>
 - <https://twitter.com/anthonykgross>
 - <https://github.com/anthonykgross>
 
+**Joshua Behrens**
+- <https://github.com/JoshuaBehrens>
+
 ## Copyright and license
-Code and documentation copyright 2017. Code released under [the MIT license](https://github.com/anthonykgross/dependency-resolver/blob/master/LICENSE).
+Code and documentation copyright 2020. Code released under [the MIT license](https://github.com/anthonykgross/dependency-resolver/blob/master/LICENSE).
 
