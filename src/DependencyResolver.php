@@ -41,6 +41,14 @@ class DependencyResolver
         $unresolved[] = $item;
 
         foreach ($items[$item] as $dep) {
+            if (!array_key_exists($dep, $items)) {
+                if ($resolveBehaviour->isThrowOnMissingReference()) {
+                    throw new Exception\MissingReferenceException($item, $dep);
+                }
+
+                return [$resolved, $unresolved, true];
+            }
+
             if (in_array($dep, $resolved, true)) {
                 continue;
             }

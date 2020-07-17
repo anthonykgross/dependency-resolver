@@ -4,6 +4,7 @@ namespace Algorithm\Tests;
 
 use Algorithm\DependencyResolver;
 use Algorithm\Exception\CircularReferenceException;
+use Algorithm\Exception\MissingReferenceException;
 use Algorithm\ResolveBehaviour;
 use PHPUnit\Framework\TestCase;
 
@@ -112,5 +113,31 @@ class DependencyResolverTest extends TestCase
         ];
         $resolution = DependencyResolver::resolve($tree);
         static::assertEquals($resolution, ['A','B','C','D','E']);
+    }
+
+    public function testMissingDependenciesCaseThrowBehaviour(): void
+    {
+        $this->expectException(MissingReferenceException::class);
+        $this->expectExceptionMessage('Missing dependency: B -> A');
+
+        $tree = [
+            'B' => ['A'],
+        ];
+        DependencyResolver::resolve(
+            $tree,
+            ResolveBehaviour::create()->setThrowOnMissingReference(true)
+        );
+    }
+
+    public function testMissingDependenciesCaseNotThrowBehaviour(): void
+    {
+        $tree = [
+            'B' => ['A'],
+        ];
+        $resolution = DependencyResolver::resolve(
+            $tree,
+            ResolveBehaviour::create()->setThrowOnMissingReference(false)
+        );
+        static::assertEquals($resolution, []);
     }
 }
